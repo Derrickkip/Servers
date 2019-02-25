@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import {connect} from 'react-redux';
+import {getServers} from '../actions/index';
 import TableRow from './TableRow'
 
-export default class IndexComponent extends Component {
+class IndexComponent extends Component {
 
   constructor(props) {
     super(props);
@@ -10,17 +11,11 @@ export default class IndexComponent extends Component {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:4200/serverport')
-    .then(response => {
-      this.setState({ serverports: response.data})
-    })
-    .catch(function(error) {
-      console.log(error);
-    })
+    this.props.getServers()
   }
 
   tableRow() {
-    return this.state.serverports.map(function(object, i) {
+    return this.props.servers.map(function(object, i) {
       return <TableRow obj={object} key={i} />;
     })
   }
@@ -44,3 +39,19 @@ export default class IndexComponent extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    servers: state.servers.servers
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getServers: () => {
+      dispatch(getServers())
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(IndexComponent)

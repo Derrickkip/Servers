@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
-export default class CreateComponent extends Component {
+import {connect} from 'react-redux';
+import {addServer} from '../actions/index';
+class CreateComponent extends Component {
 
   constructor(props) {
     super(props)
@@ -30,17 +30,8 @@ export default class CreateComponent extends Component {
   onSubmit(e) {
     e.preventDefault();
     console.log(`name is ${this.state.name} and port is ${this.state.port}`)
-    const serverPort = {
-      name: this.state.name,
-      port: this.state.port
-    }
-    axios.post('http://localhost:4200/serverport/add', serverPort)
-    .then(res => console.log(res.data));
-    this.setState({
-      name: '',
-      port: ''
-    })
-    this.props.history.push('index')
+    this.props.addServer(this.state.name, this.state.port)
+    this.props.history.push('/index')
   }
 
   render() {
@@ -64,3 +55,19 @@ export default class CreateComponent extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    servers: state.servers
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addServer: (name, port) => {
+      dispatch(addServer(name, port))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateComponent)

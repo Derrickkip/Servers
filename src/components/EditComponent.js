@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 import axios from 'axios';
+import {updateServer} from '../actions/index';
 
-export default class EditComponent extends Component {
+class EditComponent extends Component {
   constructor(props) {
     super(props);
       this.onChangeHostName = this.onChangeHostName.bind(this);
@@ -42,8 +44,7 @@ export default class EditComponent extends Component {
       name: this.state.name,
       port: this.state.port
     }
-    axios.post('http://localhost:4200/serverport/update/'+this.props.match.params.id, serverport)
-    .then(res => console.log(res.data));
+    this.props.updateServer(this.props.match.params.id, serverport)
     this.setState({
       name: '',
       port: ''
@@ -76,3 +77,19 @@ export default class EditComponent extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    servers: state.servers.servers
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateServer: (id, server) => {
+      dispatch(updateServer(id, server))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditComponent)
