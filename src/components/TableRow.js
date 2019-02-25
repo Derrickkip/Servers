@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import {deleteServer} from '../actions/index';
 
 class TableRow extends Component {
 
@@ -10,9 +11,7 @@ class TableRow extends Component {
   }
 
   delete() {
-    axios.get('http://localhost:4200/serverport/delete/'+this.props.obj._id)
-    .then(console.log('Deleted'))
-    .catch(err => console.log(err))
+    this.props.deleteServer(this.props.obj._id)
   }
 
   render() {
@@ -39,4 +38,18 @@ class TableRow extends Component {
   }
 }
 
-export default TableRow;
+const mapStateToProps = (state) => {
+  return {
+    servers: state.servers.servers
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteServer: (id) => {
+      dispatch(deleteServer(id))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TableRow)
